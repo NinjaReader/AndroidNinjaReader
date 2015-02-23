@@ -7,9 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.ninjareader.R;
 import com.facebook.AppEventsLogger;
 import com.parse.Parse;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
@@ -29,10 +29,10 @@ public class MainActivity extends ActionBarActivity {
 
         Parse.initialize(this, getResources().getString(R.string.parse_app_id), getResources().getString(R.string.parse_client_key));
 
-        ParseTwitterUtils.initialize(getResources().getString(R.string.twitter_app_key), getResources().getString(R.string.twitter_app_secret));
-
         ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
         startActivityForResult(builder.build(), PARSE_LOGIN_REQUEST_CODE);
+
+        ParseTwitterUtils.initialize(getResources().getString(R.string.twitter_app_key), getResources().getString(R.string.twitter_app_secret));
     }
 
 
@@ -64,7 +64,16 @@ public class MainActivity extends ActionBarActivity {
             if (resultCode == RESULT_OK) {
                 ParseUser currentUser = ParseUser.getCurrentUser();
 
-                Toast.makeText(MainActivity.this, "Welcome " + currentUser.getUsername(), Toast.LENGTH_SHORT).show();
+                // Determine how the user has linked
+                if (ParseFacebookUtils.isLinked(currentUser)) {
+                    Toast.makeText(MainActivity.this, "Linked with facebook", Toast.LENGTH_SHORT).show();
+                }
+
+                if (ParseTwitterUtils.isLinked(currentUser)) {
+                    Toast.makeText(MainActivity.this, "Linked with twitter", Toast.LENGTH_SHORT).show();
+                }
+
+                Toast.makeText(MainActivity.this, "Welcome " + currentUser.get("name"), Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(MainActivity.this, "Login was canceled", Toast.LENGTH_SHORT).show();
             }
