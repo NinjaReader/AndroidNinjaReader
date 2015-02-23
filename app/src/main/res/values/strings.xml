@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Ninja Reader</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="parse_app_id">A52c2yPcqmq1enRcprwZGuYgXCExrWZWUQ9BbbUZ</string>
+    <string name="parse_client_key">cHPMslYmvZ9WyskQiyDC6TNbchZ4NSvkh7KaQTel</string>
+    <string name="twitter_app_key">3wLgOZzICDUfnitYIIbsFo5Ad</string>
+    <string name="twitter_app_secret">KYaSw9jPmf8asBt6xOFN5BQQ4CPYfJVPnPnsJAs73A4tByb61H</string>
+    <string name="facebook_app_id">434031823414590</string>
+
+</resources>
