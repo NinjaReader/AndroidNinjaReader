@@ -1,33 +1,31 @@
-package com.example.ninjareader;
+package com.example.ninjareader.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Movie;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.ninjareader.Models.Article;
+import com.example.ninjareader.R;
+import com.example.ninjareader.activities.ReadingListActivity;
+import com.example.ninjareader.models.FakeArticle;
 
 import java.util.ArrayList;
 
 /**
  * Created by ccoria on 2/22/15.
  */
-public class ArticleArrayAdapter extends ArrayAdapter<Article> {
+public class ArticleArrayAdapter extends ArrayAdapter<FakeArticle> {
 
-    public ArticleArrayAdapter(Context context, ArrayList<Article> objects) {
+    public ArticleArrayAdapter(Context context, ArrayList<FakeArticle> objects) {
         super(context, R.layout.reading_item, objects);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        Article article = getItem(position);
+        FakeArticle fakeArticle = getItem(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
                     .inflate(R.layout.reading_item, parent, false);
@@ -36,14 +34,14 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity activity = (MainActivity) getContext();
+                ReadingListActivity activity = (ReadingListActivity) getContext();
                 //open the article
             }
         });
 
         TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
         TextView tvItemNumber = (TextView) convertView.findViewById(R.id.tvItemNumber);
-        tvTitle.setText(article.getTitle());
+        tvTitle.setText(fakeArticle.getTitle());
         tvItemNumber.setText(getNumber(position));
         return convertView;
     }
