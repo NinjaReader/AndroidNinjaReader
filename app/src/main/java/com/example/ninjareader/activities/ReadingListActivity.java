@@ -16,7 +16,6 @@ import com.example.ninjareader.model.Article;
 import com.example.ninjareader.model.FakeArticle;
 import com.facebook.AppEventsLogger;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
@@ -34,6 +33,19 @@ public class ReadingListActivity extends ActionBarActivity {
 
         //I'D LIKE TO MAKE IT WORK THROUGH THE STYLES..
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+
+        // Determine how the user has linked
+        if (ParseFacebookUtils.isLinked(currentUser)) {
+            Toast.makeText(ReadingListActivity.this, "Linked with facebook", Toast.LENGTH_SHORT).show();
+        }
+
+        if (ParseTwitterUtils.isLinked(currentUser)) {
+            Toast.makeText(ReadingListActivity.this, "Linked with twitter", Toast.LENGTH_SHORT).show();
+        }
+
+        Toast.makeText(ReadingListActivity.this, "Welcome " + currentUser.get("name"), Toast.LENGTH_SHORT).show();
 
         if (getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_SEND)) {
             String type = getIntent().getType();
@@ -66,19 +78,6 @@ public class ReadingListActivity extends ActionBarActivity {
                 }
             }
         });
-
-        ParseUser currentUser = ParseUser.getCurrentUser();
-
-        // Determine how the user has linked
-        if (ParseFacebookUtils.isLinked(currentUser)) {
-            Toast.makeText(ReadingListActivity.this, "Linked with facebook", Toast.LENGTH_SHORT).show();
-        }
-
-        if (ParseTwitterUtils.isLinked(currentUser)) {
-            Toast.makeText(ReadingListActivity.this, "Linked with twitter", Toast.LENGTH_SHORT).show();
-        }
-
-        Toast.makeText(ReadingListActivity.this, "Welcome " + currentUser.get("name"), Toast.LENGTH_SHORT).show();
     }
 
 
