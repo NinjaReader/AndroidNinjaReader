@@ -44,19 +44,6 @@ public class LoginActivity extends ActionBarActivity {
     }
 
     private void onLoginSuccess() {
-        ParseUser currentUser = ParseUser.getCurrentUser();
-
-        // Determine how the user has linked
-        if (ParseFacebookUtils.isLinked(currentUser)) {
-            Toast.makeText(LoginActivity.this, "Linked with facebook", Toast.LENGTH_SHORT).show();
-        }
-
-        if (ParseTwitterUtils.isLinked(currentUser)) {
-            Toast.makeText(LoginActivity.this, "Linked with twitter", Toast.LENGTH_SHORT).show();
-        }
-
-        Toast.makeText(LoginActivity.this, "Welcome " + currentUser.get("name"), Toast.LENGTH_SHORT).show();
-
         Intent i = new Intent(this, ReadingListActivity.class);
         startActivity(i);
     }
