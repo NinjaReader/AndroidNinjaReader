@@ -9,6 +9,7 @@
     <string name="twitter_app_key">3wLgOZzICDUfnitYIIbsFo5Ad</string>
     <string name="twitter_app_secret">KYaSw9jPmf8asBt6xOFN5BQQ4CPYfJVPnPnsJAs73A4tByb61H</string>
     <string name="facebook_app_id">434031823414590</string>
+    <string name="action_exit">Logout</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

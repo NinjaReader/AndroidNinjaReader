@@ -16,11 +16,12 @@ import com.example.ninjareader.model.Article;
 import com.example.ninjareader.model.FakeArticle;
 import com.facebook.AppEventsLogger;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.parse.ParseException;
-import com.parse.SaveCallback;
+import com.parse.Parse;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseTwitterUtils;
+import com.parse.ParseUser;
 
 import org.apache.http.Header;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -65,13 +66,26 @@ public class ReadingListActivity extends ActionBarActivity {
                 }
             }
         });
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+
+        // Determine how the user has linked
+        if (ParseFacebookUtils.isLinked(currentUser)) {
+            Toast.makeText(ReadingListActivity.this, "Linked with facebook", Toast.LENGTH_SHORT).show();
+        }
+
+        if (ParseTwitterUtils.isLinked(currentUser)) {
+            Toast.makeText(ReadingListActivity.this, "Linked with twitter", Toast.LENGTH_SHORT).show();
+        }
+
+        Toast.makeText(ReadingListActivity.this, "Welcome " + currentUser.get("name"), Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_reading_list, menu);
         return true;
     }
 
@@ -81,6 +95,14 @@ public class ReadingListActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if (id == R.id.action_exit) {
+            ParseUser.getCurrentUser().logOut();
+            Intent i = new Intent(this, LoginActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
+            startActivity(i);
+            finish();
+        }
 
         return super.onOptionsItemSelected(item);
     }
