@@ -6,14 +6,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
 import com.example.ninjareader.R;
-import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
 
 public class LoginActivity extends ActionBarActivity {
 
-    public static final int PARSE_LOGIN_REQUEST_CODE = 0;
+    public static final int PARSE_LOGIN_REQUEST_CODE = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +26,9 @@ public class LoginActivity extends ActionBarActivity {
     }
 
     private void login() {
+        ParseTwitterUtils.initialize(getResources().getString(R.string.twitter_app_key), getResources().getString(R.string.twitter_app_secret));
         ParseLoginBuilder builder = new ParseLoginBuilder(LoginActivity.this);
         startActivityForResult(builder.build(), PARSE_LOGIN_REQUEST_CODE);
-        ParseTwitterUtils.initialize(getResources().getString(R.string.twitter_app_key), getResources().getString(R.string.twitter_app_secret));
     }
 
     @Override
