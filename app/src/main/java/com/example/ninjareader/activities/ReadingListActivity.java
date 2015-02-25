@@ -11,12 +11,17 @@ import android.widget.Toast;
 
 import com.example.ninjareader.adapters.ArticleArrayAdapter;
 import com.example.ninjareader.R;
+import com.example.ninjareader.clients.ReadabilityClient;
 import com.example.ninjareader.models.FakeArticle;
 import com.facebook.AppEventsLogger;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
 
 
 public class ReadingListActivity extends ActionBarActivity {
@@ -42,6 +47,23 @@ public class ReadingListActivity extends ActionBarActivity {
         ListView lvReadingItems = (ListView) findViewById(R.id.lvArticles);
 
         lvReadingItems.setAdapter(articleArrayAdapter);
+
+        // example get article call
+        ReadabilityClient.getArticleInfo("http://news.yahoo.com/congress-sends-keystone-bill-obama-plans-veto-140235568--finance.html", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Toast.makeText(ReadingListActivity.this, "Success getting article info", Toast.LENGTH_SHORT).show();
+                Log.d("DEBUG", response.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Toast.makeText(ReadingListActivity.this, "Failed getting article info", Toast.LENGTH_SHORT).show();
+                if (errorResponse != null) {
+                    Log.d("ERROR", errorResponse.toString());
+                }
+            }
+        });
     }
 
 
