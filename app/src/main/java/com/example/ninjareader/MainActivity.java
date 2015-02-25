@@ -1,8 +1,9 @@
 package com.example.ninjareader;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -24,6 +25,13 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(getIntent().getAction().equals(Intent.ACTION_SEND))
+        {
+            String type = getIntent().getType();
+            Log.i("TYPE", type);
+            String text = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            Log.i("TEXT", text);
+        }
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
 
