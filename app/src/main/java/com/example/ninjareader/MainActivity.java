@@ -27,6 +27,9 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //I'D LIKE TO MAKE IT WORK THROUGH THE STYLES..
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         if(getIntent().getAction().equals(Intent.ACTION_SEND))
         {
             String type = getIntent().getType();
@@ -66,11 +69,6 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
