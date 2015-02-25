@@ -1,4 +1,4 @@
-package com.example.ninjareader.models;
+package com.example.ninjareader.model;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.example.ninjareader.R;
 import com.example.ninjareader.activities.ReadingListActivity;
-import com.example.ninjareader.models.FakeArticle;
+import com.example.ninjareader.model.FakeArticle;
 
 import java.util.ArrayList;
 

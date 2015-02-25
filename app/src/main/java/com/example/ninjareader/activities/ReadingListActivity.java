@@ -12,15 +12,15 @@ import android.widget.Toast;
 import com.example.ninjareader.adapters.ArticleArrayAdapter;
 import com.example.ninjareader.R;
 import com.example.ninjareader.clients.ReadabilityClient;
-import com.example.ninjareader.models.FakeArticle;
+import com.example.ninjareader.model.Article;
+import com.example.ninjareader.model.FakeArticle;
 import com.facebook.AppEventsLogger;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseTwitterUtils;
-import com.parse.ParseUser;
-import com.parse.ui.ParseLoginBuilder;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 import org.apache.http.Header;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -54,6 +54,7 @@ public class ReadingListActivity extends ActionBarActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Toast.makeText(ReadingListActivity.this, "Success getting article info", Toast.LENGTH_SHORT).show();
                 Log.d("DEBUG", response.toString());
+                Article article = Article.fromJSON(response);
             }
 
             @Override
