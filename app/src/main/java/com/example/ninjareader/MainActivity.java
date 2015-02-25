@@ -6,8 +6,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.ninjareader.Models.Article;
 import com.facebook.AppEventsLogger;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
@@ -41,6 +43,13 @@ public class MainActivity extends ActionBarActivity {
         startActivityForResult(builder.build(), PARSE_LOGIN_REQUEST_CODE);
 
         ParseTwitterUtils.initialize(getResources().getString(R.string.twitter_app_key), getResources().getString(R.string.twitter_app_secret));
+
+        ArticleArrayAdapter articleArrayAdapter =
+                new ArticleArrayAdapter(this, Article.GetFakeArticles());
+
+        ListView lvReadingItems = (ListView) findViewById(R.id.lvArticles);
+
+        lvReadingItems.setAdapter(articleArrayAdapter);
     }
 
 
