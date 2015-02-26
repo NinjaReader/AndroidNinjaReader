@@ -2,6 +2,7 @@ package com.example.ninjareader.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -9,13 +10,15 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.ninjareader.adapters.ArticleArrayAdapter;
 import com.example.ninjareader.R;
+import com.example.ninjareader.adapters.ArticleArrayAdapter;
 import com.example.ninjareader.clients.ReadabilityClient;
+import com.example.ninjareader.fragments.AddArticleDialog;
 import com.example.ninjareader.model.Article;
 import com.example.ninjareader.model.FakeArticle;
 import com.facebook.AppEventsLogger;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
@@ -24,7 +27,7 @@ import org.apache.http.Header;
 import org.json.JSONObject;
 
 
-public class ReadingListActivity extends ActionBarActivity {
+public class ReadingListActivity extends ActionBarActivity implements AddArticleDialog.AddUrlDialogListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +52,12 @@ public class ReadingListActivity extends ActionBarActivity {
 
         if (getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_SEND)) {
             String type = getIntent().getType();
-            Log.i("TYPE", type);
-            String text = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-            Log.i("TEXT", text);
+            Log.i("ArticleTYPE", type);
+            String articleUrl = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            Log.i("ArticleURL", articleUrl);
+
+            addNewArticle(articleUrl);
+
         }
 
         ArticleArrayAdapter articleArrayAdapter =
@@ -61,13 +67,44 @@ public class ReadingListActivity extends ActionBarActivity {
 
         lvReadingItems.setAdapter(articleArrayAdapter);
 
-        // example get article call
-        ReadabilityClient.getArticleInfo("http://news.yahoo.com/congress-sends-keystone-bill-obama-plans-veto-140235568--finance.html", new JsonHttpResponseHandler() {
+//        // example get article call
+//        try {
+//            ReadabilityClient.getArticleInfo("http://news.yahoo.com/congress-sends-keystone-bill-obama-plans-veto-140235568--finance.html", new JsonHttpResponseHandler() {
+//                @Override
+//                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                    Toast.makeText(ReadingListActivity.this, "Success getting article info", Toast.LENGTH_SHORT).show();
+//                    Log.d("DEBUG", response.toString());
+//                    Article article = Article.fromJSON(response);
+//                }
+//
+//                @Override
+//                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+//                    Toast.makeText(ReadingListActivity.this, "Failed getting article info", Toast.LENGTH_SHORT).show();
+//                    if (errorResponse != null) {
+//                        Log.d("ERROR", errorResponse.toString());
+//                    }
+//                }
+//            });
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    private void addNewArticle(String articleUrl)  {
+        ReadabilityClient.getArticleInfo(articleUrl, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Toast.makeText(ReadingListActivity.this, "Success getting article info", Toast.LENGTH_SHORT).show();
                 Log.d("DEBUG", response.toString());
-                Article article = Article.fromJSON(response);
+                try {
+                    Article article = Article.fromJSON(response);
+                    article.save();
+                    Toast.makeText(getBaseContext(), "Success saving article info", Toast.LENGTH_SHORT).show();
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
@@ -79,7 +116,6 @@ public class ReadingListActivity extends ActionBarActivity {
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -102,8 +138,18 @@ public class ReadingListActivity extends ActionBarActivity {
             startActivity(i);
             finish();
         }
+        if(id == R.id.action_add) {
+            showAddDialog();
+            //addNewArticle();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAddDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        AddArticleDialog addArticleDialog = AddArticleDialog.newInstance("Add Article");
+        addArticleDialog.show(fm, "fragment_add_dialog");
     }
 
     @Override
@@ -120,5 +166,10 @@ public class ReadingListActivity extends ActionBarActivity {
 
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+    }
+
+    @Override
+    public void onFinishAddUrl(String url) {
+        addNewArticle(url);
     }
 }
