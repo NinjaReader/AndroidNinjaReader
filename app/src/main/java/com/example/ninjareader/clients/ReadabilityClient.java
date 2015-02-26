@@ -12,6 +12,7 @@ public class ReadabilityClient {
     private static AsyncHttpClient client = new AsyncHttpClient();
 
     public static void getArticleInfo(String articleUrl, AsyncHttpResponseHandler responseHandler) {
-        client.get(BASE_URL + "parser?url=" + articleUrl + "&token=82d707b4ad3f26438ecb6935e48610a49ed981ef", responseHandler);
+        String formattedUrl = BASE_URL + "parser?url=" + articleUrl + "&token=82d707b4ad3f26438ecb6935e48610a49ed981ef";
+        client.get(formattedUrl, responseHandler);
     }
 }
