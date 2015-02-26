@@ -9,6 +9,12 @@
         android:title="Add"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_profile"
+        android:icon="@drawable/ic_action_stats"
+        android:orderInCategory="90"
+        android:title="Add"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_exit"
         android:icon="@drawable/ic_action_exit"
         android:orderInCategory="100"

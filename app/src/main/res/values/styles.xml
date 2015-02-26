@@ -13,5 +13,7 @@
         <item name="background">@android:color/black</item>
     </style>
 
+    <color name="red">#C70025</color>
+
 
 </resources>

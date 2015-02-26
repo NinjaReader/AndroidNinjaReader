@@ -41,6 +41,7 @@ public class ReadingListActivity extends ActionBarActivity implements AddArticle
 
         //I'D LIKE TO MAKE IT WORK THROUGH THE STYLES..
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_spy_white);
 
         Toast.makeText(ReadingListActivity.this, "Welcome " + ParseUser.getCurrentUser().get("name"), Toast.LENGTH_SHORT).show();
 
@@ -165,6 +166,10 @@ public class ReadingListActivity extends ActionBarActivity implements AddArticle
         }
         if(id == R.id.action_add) {
             showAddDialog();
+        }
+        if(id == R.id.action_profile) {
+            Intent i = new Intent(this, ProfileActivity.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);
