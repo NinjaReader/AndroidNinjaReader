@@ -1,6 +1,7 @@
 package com.example.ninjareader.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -15,96 +16,120 @@ import com.example.ninjareader.adapters.ArticleArrayAdapter;
 import com.example.ninjareader.clients.ReadabilityClient;
 import com.example.ninjareader.fragments.AddArticleDialog;
 import com.example.ninjareader.model.Article;
-import com.example.ninjareader.model.FakeArticle;
 import com.facebook.AppEventsLogger;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseTwitterUtils;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReadingListActivity extends ActionBarActivity implements AddArticleDialog.AddUrlDialogListener{
+    private ArrayList<Article> articles;
+    private ArticleArrayAdapter articleArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_reading_list);
 
         //I'D LIKE TO MAKE IT WORK THROUGH THE STYLES..
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        ParseUser currentUser = ParseUser.getCurrentUser();
+        Toast.makeText(ReadingListActivity.this, "Welcome " + ParseUser.getCurrentUser().get("name"), Toast.LENGTH_SHORT).show();
 
-        // Determine how the user has linked
-        if (ParseFacebookUtils.isLinked(currentUser)) {
-            Toast.makeText(ReadingListActivity.this, "Linked with facebook", Toast.LENGTH_SHORT).show();
-        }
-
-        if (ParseTwitterUtils.isLinked(currentUser)) {
-            Toast.makeText(ReadingListActivity.this, "Linked with twitter", Toast.LENGTH_SHORT).show();
-        }
-
-        Toast.makeText(ReadingListActivity.this, "Welcome " + currentUser.get("name"), Toast.LENGTH_SHORT).show();
-
-        if (getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_SEND)) {
-            String type = getIntent().getType();
-            Log.i("ArticleTYPE", type);
-            String articleUrl = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-            Log.i("ArticleURL", articleUrl);
-
-            addNewArticle(articleUrl);
-
-        }
-
-        ArticleArrayAdapter articleArrayAdapter =
-                new ArticleArrayAdapter(this, FakeArticle.GetFakeArticles());
+        articles = new ArrayList<Article>();
+        articleArrayAdapter = new ArticleArrayAdapter(this, articles);
 
         ListView lvReadingItems = (ListView) findViewById(R.id.lvArticles);
-
         lvReadingItems.setAdapter(articleArrayAdapter);
 
-//        // example get article call
-//        try {
-//            ReadabilityClient.getArticleInfo("http://news.yahoo.com/congress-sends-keystone-bill-obama-plans-veto-140235568--finance.html", new JsonHttpResponseHandler() {
-//                @Override
-//                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                    Toast.makeText(ReadingListActivity.this, "Success getting article info", Toast.LENGTH_SHORT).show();
-//                    Log.d("DEBUG", response.toString());
-//                    Article article = Article.fromJSON(response);
-//                }
-//
-//                @Override
-//                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-//                    Toast.makeText(ReadingListActivity.this, "Failed getting article info", Toast.LENGTH_SHORT).show();
-//                    if (errorResponse != null) {
-//                        Log.d("ERROR", errorResponse.toString());
-//                    }
-//                }
-//            });
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
+        // Gets the user's current articles
+        getArticles();
+
+        // Handle any articles that were shared to this activity
+        handleSharedArticle();
     }
 
-    private void addNewArticle(String articleUrl)  {
-        ReadabilityClient.getArticleInfo(articleUrl, new JsonHttpResponseHandler() {
+    private void getArticles() {
+        // Set up the query on the Bookmark table
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Bookmark");
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        query.whereEqualTo("read", false);
+        query.include("article");
+        query.orderByDescending("createdAt");
+
+        // Execute the query
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                for (int i = 0; i < parseObjects.size(); i++) {
+                    Article article = (Article) parseObjects.get(i).getParseObject("article");
+                    articles.add(article);
+                }
+                articleArrayAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void handleSharedArticle() {
+        Intent intent = getIntent();
+        final String sharedUrl = intent.getStringExtra("shared_url");
+        if (sharedUrl != null) {
+            addNewArticle(sharedUrl);
+        }
+    }
+
+    private void addToReadingList(final Article article) {
+        // Add bookmark if it doesn't already exist
+        // Set up the query on the Bookmark table
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Bookmark");
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        query.whereEqualTo("article", article);
+
+        // Execute the query
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (parseObjects.size() > 0) {
+                    Toast.makeText(ReadingListActivity.this, "Article is already in user's reading list", Toast.LENGTH_SHORT).show();
+                } else {
+                    ParseObject bookmark = new ParseObject("Bookmark");
+                    bookmark.put("user", ParseUser.getCurrentUser());
+                    bookmark.put("article", article);
+                    bookmark.put("read", false);
+                    bookmark.saveInBackground();
+                    Toast.makeText(ReadingListActivity.this, "Added article to user's reading list", Toast.LENGTH_SHORT).show();
+                    articles.add(0, article);
+                    articleArrayAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
+
+    private void getArticleInfo(String sharedUrl) {
+        ReadabilityClient.getArticleInfo(sharedUrl, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Toast.makeText(ReadingListActivity.this, "Success getting article info", Toast.LENGTH_SHORT).show();
                 Log.d("DEBUG", response.toString());
-                try {
-                    Article article = Article.fromJSON(response);
-                    article.save();
-                    Toast.makeText(getBaseContext(), "Success saving article info", Toast.LENGTH_SHORT).show();
+                Article.fromJSON(response, new Article.SaveArticleCallback() {
+                    @Override
+                    public void onArticleSaveSuccess(Article article) {
+                        addToReadingList(article);
+                    }
 
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
+                    @Override
+                    public void onArticleSaveFailure(ParseException e) {
+                        Toast.makeText(ReadingListActivity.this, "Failed saving article", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -140,7 +165,6 @@ public class ReadingListActivity extends ActionBarActivity implements AddArticle
         }
         if(id == R.id.action_add) {
             showAddDialog();
-            //addNewArticle();
         }
 
         return super.onOptionsItemSelected(item);
@@ -171,5 +195,51 @@ public class ReadingListActivity extends ActionBarActivity implements AddArticle
     @Override
     public void onFinishAddUrl(String url) {
         addNewArticle(url);
+    }
+
+    public void readArticle(Article article) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(article.getUrl()));
+        startActivity(i);
+    }
+
+    private void addNewArticle(final String url) {
+        // Add the url to User's reading list
+        Toast.makeText(this, "Adding url " + url + " to reading list", Toast.LENGTH_SHORT).show();
+
+        // Check if that Url already exists in the database
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Article");
+        query.whereEqualTo("url", url);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (parseObjects.size() > 0) {
+                    // Entry already exists
+                    Toast.makeText(ReadingListActivity.this, url + " already exists in Article DB", Toast.LENGTH_SHORT).show();
+                    addToReadingList((Article) parseObjects.get(0));
+                } else {
+                    // Add it to the Article DB
+                    getArticleInfo(url);
+                }
+
+            }
+        });
+    }
+
+    public void markAsRead(Article article) {
+        // Set up the query on the Bookmark table
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Bookmark");
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        query.whereEqualTo("article", article);
+
+        // Execute the query
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                ParseObject bookmark = parseObjects.get(0);
+                bookmark.put("read", true);
+                bookmark.saveInBackground();
+            }
+        });
     }
 }
