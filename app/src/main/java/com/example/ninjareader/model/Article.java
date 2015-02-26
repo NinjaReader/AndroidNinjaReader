@@ -42,6 +42,10 @@ public class Article extends ParseObject {
         return getInt("word_count");
     }
 
+    public String getDomain() {
+        return getString("domain");
+    }
+
     // Setters
     public void setTitle(String title) {
         put("title", title);
@@ -67,8 +71,18 @@ public class Article extends ParseObject {
         put("word_count", wordCount);
     }
 
+    public void setDomain(String domain) {
+        put("domain", domain);
+    }
+
+    // Define callback interface
+    public interface SaveArticleCallback {
+        void onArticleSaveSuccess(Article article);
+        void onArticleSaveFailure(ParseException e);
+    }
+
     // Stores article in Parse table
-    public static Article fromJSON(JSONObject jsonObject) {
+    public static Article fromJSON(JSONObject jsonObject, final SaveArticleCallback callback) {
         // SAMPLE jsonObject
         /**
          * {
@@ -91,7 +105,7 @@ public class Article extends ParseObject {
          */
 
         // put article info
-        Article article = new Article();
+        final Article article = new Article();
         try {
             article.setAuthor(jsonObject.getString("author"));
             article.setLeadImageUrl(jsonObject.getString("lead_image_url"));
@@ -99,11 +113,14 @@ public class Article extends ParseObject {
             article.setTitle(jsonObject.getString("title"));
             article.setUrl(jsonObject.getString("url"));
             article.setWordCount(jsonObject.getInt("word_count"));
+            article.setDomain(jsonObject.getString("domain"));
             article.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-                    if (e != null) {
-                        Log.d("ERROR", e.toString());
+                    if (e == null) {
+                        callback.onArticleSaveSuccess(article);
+                    } else {
+                        callback.onArticleSaveFailure(e);
                     }
                 }
             });
