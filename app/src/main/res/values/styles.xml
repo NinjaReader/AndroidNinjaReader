@@ -9,9 +9,10 @@
         <item name="actionBarStyle">@style/CustomActionBar</item>
     </style>
     <style name="CustomActionBar" parent="Base.Widget.AppCompat.ActionBar">
-        <item name="icon">@drawable/ic_logo</item> <!-- THIS IS NOT WORKING, YOU GUYS KNOW WHY? -->
         <item name="background">@android:color/black</item>
     </style>
+
+    <color name="red">#C70025</color>
 
 
 </resources>

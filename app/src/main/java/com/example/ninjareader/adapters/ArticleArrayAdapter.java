@@ -1,31 +1,36 @@
 package com.example.ninjareader.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ninjareader.R;
 import com.example.ninjareader.activities.ReadingListActivity;
+import com.example.ninjareader.model.Article;
 import com.example.ninjareader.model.FakeArticle;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 /**
  * Created by ccoria on 2/22/15.
  */
-public class ArticleArrayAdapter extends ArrayAdapter<FakeArticle> {
+public class ArticleArrayAdapter extends ArrayAdapter<Article> {
 
-    public ArticleArrayAdapter(Context context, ArrayList<FakeArticle> objects) {
+    public ArticleArrayAdapter(Context context, ArrayList<Article> objects) {
         super(context, R.layout.reading_item, objects);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        FakeArticle fakeArticle = getItem(position);
+        final Article article = getItem(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
                     .inflate(R.layout.reading_item, parent, false);
@@ -35,14 +40,37 @@ public class ArticleArrayAdapter extends ArrayAdapter<FakeArticle> {
             @Override
             public void onClick(View v) {
                 ReadingListActivity activity = (ReadingListActivity) getContext();
-                //open the article
+                activity.readArticle(article);
+            }
+        });
+
+        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ReadingListActivity activity = (ReadingListActivity) getContext();
+                activity.markAsRead(article);
+                remove(article);
+                return true;
             }
         });
 
         TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
-        TextView tvItemNumber = (TextView) convertView.findViewById(R.id.tvItemNumber);
-        tvTitle.setText(fakeArticle.getTitle());
-        tvItemNumber.setText(getNumber(position));
+        ImageView ivLeadImage = (ImageView) convertView.findViewById(R.id.ivLeadImage);
+//        TextView tvItemNumber = (TextView) convertView.findViewById(R.id.tvItemNumber);
+        TextView tvDomain = (TextView) convertView.findViewById(R.id.tvDomain);
+        TextView tvWordCount = (TextView) convertView.findViewById(R.id.tvWordCount);
+
+        tvTitle.setText(article.getTitle());
+        if (!article.getLeadImageUrl().equals("null")) {
+            ivLeadImage.setImageResource(android.R.color.transparent); // clear out the old image for a recycled view
+            Picasso.with(getContext()).load(article.getLeadImageUrl()).into(ivLeadImage);
+            ivLeadImage.setVisibility(View.VISIBLE);
+        } else {
+            ivLeadImage.setVisibility(View.GONE);
+        }
+//        tvItemNumber.setText(getNumber(position));
+        tvDomain.setText(article.getDomain());
+        tvWordCount.setText(String.valueOf(article.getWordCount() + " words"));
         return convertView;
     }
 

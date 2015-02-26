@@ -8,19 +8,12 @@
     <application
         android:name=".NinjaReaderApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_spy_bg_white"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".activities.ReadingListActivity"
             android:label="@string/app_name" >
-            <intent-filter
-                android:icon="@drawable/ic_launcher"
-                android:label="@string/app_name" >
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.parse.ui.ParseLoginActivity"
@@ -55,8 +48,26 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter
+                android:icon="@mipmap/ic_spy"
+                android:label="@string/app_name" >
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:label="@string/title_activity_profile" >
+        </activity>
+        <activity
+            android:name=".activities.ArticleActivity"
+            android:label="@string/title_activity_article" >
         </activity>
     </application>
 

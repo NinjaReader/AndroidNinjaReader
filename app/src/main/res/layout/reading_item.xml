@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="70dp"
-    android:paddingLeft="10dp"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:clickable="true"
-    android:onClick="onClickItem">
+    android:onClick="onClickItem"
+    android:paddingLeft="10dp"
+    android:paddingTop="5dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="5dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.example.ninjareader.views.DynamicImageView
+        android:layout_width="52dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="①"
-        android:id="@+id/tvItemNumber"
+        android:id="@+id/ivLeadImage"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="30dp"
-        android:layout_marginRight="10dp" />
+        android:scaleType="fitCenter"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
 
     <TextView
         android:layout_width="fill_parent"
@@ -24,17 +27,47 @@
         android:text="Any cool text here"
         android:id="@+id/tvTitle"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/tvItemNumber"
+        android:layout_toRightOf="@+id/ivLeadImage"
         android:textStyle="bold"
-        android:textSize="18dp"
-        android:textColor="#000000" />
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="origin.com"
-        android:id="@+id/tvOrigin"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
         android:layout_below="@+id/tvTitle"
-        android:layout_toRightOf="@+id/tvItemNumber"
-        android:layout_toEndOf="@+id/tvItemNumber" />
+        android:layout_marginLeft="52dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1234 words"
+            android:id="@+id/tvWordCount"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:textColor="@android:color/tertiary_text_light"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-light" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="origin.com"
+            android:id="@+id/tvDomain"
+            android:fontFamily="sans-serif-light"
+            android:textSize="12sp"
+            android:layout_below="@+id/ivLeadImage"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:textColor="@android:color/tertiary_text_light" />
+    </LinearLayout>
+
 </RelativeLayout>
