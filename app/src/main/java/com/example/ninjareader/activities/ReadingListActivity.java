@@ -34,6 +34,8 @@ public class ReadingListActivity extends ActionBarActivity implements AddArticle
     private ArrayList<Article> articles;
     private ArticleArrayAdapter articleArrayAdapter;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +110,7 @@ public class ReadingListActivity extends ActionBarActivity implements AddArticle
                     bookmark.saveInBackground();
                     Toast.makeText(ReadingListActivity.this, "Added article to user's reading list", Toast.LENGTH_SHORT).show();
                     articles.add(0, article);
+                    articleArrayAdapter.add(article);
                     articleArrayAdapter.notifyDataSetChanged();
                 }
             }
