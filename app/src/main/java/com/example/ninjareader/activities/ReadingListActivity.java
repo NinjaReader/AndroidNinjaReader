@@ -210,11 +210,10 @@ public class ReadingListActivity extends ActionBarActivity implements AddArticle
 //        startActivity(i);
         //CONVERTING TO NEW READING PANE
         Intent i = new Intent(this, ArticleActivity.class);
-
         i.putExtra("objectId", article.getObjectId());
-
         startActivity(i);
 
+        overridePendingTransition(R.anim.right_in, R.anim.left_out);
     }
 
     private void addNewArticle(final String url) {

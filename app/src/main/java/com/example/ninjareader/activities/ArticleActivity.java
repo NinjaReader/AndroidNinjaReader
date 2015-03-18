@@ -1,6 +1,7 @@
 package com.example.ninjareader.activities;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.Log;
@@ -17,14 +18,16 @@ import com.parse.ParseQuery;
 public class ArticleActivity extends ActionBarActivity {
 
     TextView articleBody;
+    ActionBar actionBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
-        //Article article = (Article) getIntent().getSerializableExtra("article");
+        actionBar = getSupportActionBar();
+        actionBar.setTitle("");
          articleBody = (TextView) findViewById(R.id.tvArticleBody);
 
-        String articleBodyHTML = getIntent().getStringExtra("bodyHTML");
+        final String articleBodyHTML = getIntent().getStringExtra("bodyHTML");
         String objectId = getIntent().getStringExtra("objectId");
 
         ParseQuery<Article> query = ParseQuery.getQuery(Article.class);
@@ -33,6 +36,8 @@ public class ArticleActivity extends ActionBarActivity {
             public void done(Article article, ParseException e) {
                 if(e==null) {
                     articleBody.setText(Html.fromHtml(article.getBodyHTML()));
+
+                    actionBar.setTitle(article.getTitle());
                 }
                 else {
                     Log.e("ArticleActivity", "error loading object");
@@ -42,6 +47,11 @@ public class ArticleActivity extends ActionBarActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.left_in, R.anim.right_out);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
