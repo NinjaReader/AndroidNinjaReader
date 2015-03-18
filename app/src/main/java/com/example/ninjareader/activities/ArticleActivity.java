@@ -7,9 +7,11 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.ninjareader.R;
+import com.example.ninjareader.listeners.OnSwipeTouchListener;
 import com.example.ninjareader.model.Article;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -19,13 +21,22 @@ public class ArticleActivity extends ActionBarActivity {
 
     TextView articleBody;
     ActionBar actionBar;
+    ScrollView scrollView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+        scrollView.setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeRight() {
+                onBackPressed();
+            }
+        });
         actionBar = getSupportActionBar();
         actionBar.setTitle("");
-         articleBody = (TextView) findViewById(R.id.tvArticleBody);
+        articleBody = (TextView) findViewById(R.id.tvArticleBody);
 
         final String articleBodyHTML = getIntent().getStringExtra("bodyHTML");
         String objectId = getIntent().getStringExtra("objectId");
@@ -69,6 +80,10 @@ public class ArticleActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_close) {
+            this.onBackPressed();
             return true;
         }
 
