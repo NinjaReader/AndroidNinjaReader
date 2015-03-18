@@ -3,7 +3,6 @@ package com.example.ninjareader.activities;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +33,6 @@ public class ArticleActivity extends ActionBarActivity {
             public void done(Article article, ParseException e) {
                 if(e==null) {
                     articleBody.setText(Html.fromHtml(article.getBodyHTML()));
-                    articleBody.setMovementMethod(new ScrollingMovementMethod());
                 }
                 else {
                     Log.e("ArticleActivity", "error loading object");
