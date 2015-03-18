@@ -1,7 +1,6 @@
 package com.example.ninjareader.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -206,9 +205,16 @@ public class ReadingListActivity extends ActionBarActivity implements AddArticle
     }
 
     public void readArticle(Article article) {
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(article.getUrl()));
+//        Intent i = new Intent(Intent.ACTION_VIEW);
+//        i.setData(Uri.parse(article.getUrl()));
+//        startActivity(i);
+        //CONVERTING TO NEW READING PANE
+        Intent i = new Intent(this, ArticleActivity.class);
+
+        i.putExtra("objectId", article.getObjectId());
+
         startActivity(i);
+
     }
 
     private void addNewArticle(final String url) {

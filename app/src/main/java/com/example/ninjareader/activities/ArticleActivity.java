@@ -1,18 +1,47 @@
 package com.example.ninjareader.activities;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.ninjareader.R;
+import com.example.ninjareader.model.Article;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 public class ArticleActivity extends ActionBarActivity {
 
+    TextView articleBody;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
+        //Article article = (Article) getIntent().getSerializableExtra("article");
+         articleBody = (TextView) findViewById(R.id.tvArticleBody);
+
+        String articleBodyHTML = getIntent().getStringExtra("bodyHTML");
+        String objectId = getIntent().getStringExtra("objectId");
+
+        ParseQuery<Article> query = ParseQuery.getQuery(Article.class);
+        query.getInBackground(objectId, new GetCallback<Article>() {
+            @Override
+            public void done(Article article, ParseException e) {
+                if(e==null) {
+                    articleBody.setText(Html.fromHtml(article.getBodyHTML()));
+                    articleBody.setMovementMethod(new ScrollingMovementMethod());
+                }
+                else {
+                    Log.e("ArticleActivity", "error loading object");
+                }
+            }
+        });
+
     }
 
 
