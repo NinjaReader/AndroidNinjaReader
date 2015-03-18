@@ -1,9 +1,5 @@
 package com.example.ninjareader.model;
 
-import android.util.Log;
-import android.widget.Toast;
-
-import com.example.ninjareader.activities.ReadingListActivity;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -17,6 +13,7 @@ import org.json.JSONObject;
  */
 @ParseClassName("Article")
 public class Article extends ParseObject {
+
     // Getters
     public String getTitle() {
         return getString("title");
@@ -46,6 +43,18 @@ public class Article extends ParseObject {
         return getString("domain");
     }
 
+    public String getBodyHTML() {
+        String text = getString("bodyHTML");
+
+        if(text == null)
+            text = getTitle();
+
+        if(text == null)
+            return "";
+        return text;
+
+    }
+
     // Setters
     public void setTitle(String title) {
         put("title", title);
@@ -71,9 +80,12 @@ public class Article extends ParseObject {
         put("word_count", wordCount);
     }
 
-    public void setDomain(String domain) {
-        put("domain", domain);
+    public void setDomain(String domain) { put("domain", domain); }
+
+    public void setBodyHTML(String bodyHTML) {
+        put("bodyHTML", bodyHTML);
     }
+
 
     // Define callback interface
     public interface SaveArticleCallback {
@@ -114,6 +126,7 @@ public class Article extends ParseObject {
             article.setUrl(jsonObject.getString("url"));
             article.setWordCount(jsonObject.getInt("word_count"));
             article.setDomain(jsonObject.getString("domain"));
+            article.setBodyHTML(jsonObject.getString("content"));
             article.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {

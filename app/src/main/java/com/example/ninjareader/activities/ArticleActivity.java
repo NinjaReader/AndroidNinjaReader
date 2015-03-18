@@ -1,20 +1,68 @@
 package com.example.ninjareader.activities;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.example.ninjareader.R;
+import com.example.ninjareader.listeners.OnSwipeTouchListener;
+import com.example.ninjareader.model.Article;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 public class ArticleActivity extends ActionBarActivity {
+
+    TextView articleBody;
+    ActionBar actionBar;
+    ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+        scrollView.setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeRight() {
+                onBackPressed();
+            }
+        });
+        actionBar = getSupportActionBar();
+        actionBar.setTitle("");
+        articleBody = (TextView) findViewById(R.id.tvArticleBody);
+
+        final String articleBodyHTML = getIntent().getStringExtra("bodyHTML");
+        String objectId = getIntent().getStringExtra("objectId");
+
+        ParseQuery<Article> query = ParseQuery.getQuery(Article.class);
+        query.getInBackground(objectId, new GetCallback<Article>() {
+            @Override
+            public void done(Article article, ParseException e) {
+                if(e==null) {
+                    articleBody.setText(Html.fromHtml(article.getBodyHTML()));
+
+                    actionBar.setTitle(article.getTitle());
+                }
+                else {
+                    Log.e("ArticleActivity", "error loading object");
+                }
+            }
+        });
+
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.left_in, R.anim.right_out);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -32,6 +80,10 @@ public class ArticleActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_close) {
+            this.onBackPressed();
             return true;
         }
 
