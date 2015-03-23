@@ -56,7 +56,7 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
 
         TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
         ImageView ivLeadImage = (ImageView) convertView.findViewById(R.id.ivLeadImage);
-//        TextView tvItemNumber = (TextView) convertView.findViewById(R.id.tvItemNumber);
+        TextView tvItemNumber = (TextView) convertView.findViewById(R.id.tvItemNumber);
         TextView tvDomain = (TextView) convertView.findViewById(R.id.tvDomain);
         TextView tvWordCount = (TextView) convertView.findViewById(R.id.tvWordCount);
 
@@ -68,7 +68,10 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         } else {
             ivLeadImage.setVisibility(View.GONE);
         }
-//        tvItemNumber.setText(getNumber(position));
+        tvItemNumber.setText(String.valueOf(position+1));
+
+
+
         tvDomain.setText(article.getDomain());
         tvWordCount.setText(String.valueOf(article.getWordCount() + " words"));
         return convertView;
