@@ -1,8 +1,9 @@
 package com.example.ninjareader.clients;
 
+import android.util.Log;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 /**
  * Created by mvince on 2/25/15.
@@ -14,6 +15,11 @@ public class ReadabilityClient {
 
     public static void getArticleInfo(String articleUrl, AsyncHttpResponseHandler responseHandler) {
         String formattedUrl = BASE_URL + "&url=" + articleUrl;
-        client.get(formattedUrl, responseHandler);
+        try {
+            client.get(formattedUrl, responseHandler);
+        } catch(IllegalArgumentException e)
+        {
+            Log.e("Illegal Argument", formattedUrl);
+        }
     }
 }
